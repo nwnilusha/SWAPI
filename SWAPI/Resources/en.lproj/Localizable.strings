@@ -1,0 +1,33 @@
+/* 
+  Localizable.strings
+  SWAPI
+
+  Created by Nilusha Niwanthaka Wimalasena on 8/9/25.
+  
+*/
+
+/* Planet List */
+
+"planetlist.title" = "SWAPI";
+"planetlist.search.placeholder" = "Search by planet name";
+"planetlist.ok" = "OK";
+"planetlist.error" = "Error";
+"planetlist.unknownError" = "Unknown error";
+
+/* Side Menu */
+
+"menu.settings" = "Settings";
+"menu.debugLogs" = "Debug Logs";
+
+/* Settings View */
+
+"settings.title" = "Settings";
+"settings.section.appearance" = "Appearance";
+"settings.theme" = "App Theme";
+"settings.theme.system" = "System";
+"settings.theme.light" = "Light";
+"settings.theme.dark" = "Dark";
+
+"settings.section.about" = "About";
+"settings.appVersion" = "App Version";
+"settings.buildNumber" = "Build Number";

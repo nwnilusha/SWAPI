@@ -8,10 +8,21 @@
 import SwiftUI
 
 @main
-struct SWAPIApp: App {
+struct CryptoPricesApp: App {
+
+    @StateObject private var coordinator = AppCoordinator()
+    
     var body: some Scene {
         WindowGroup {
-            PlanetListView()
+            ZStack {
+                NavigationStack(path: $coordinator.path) {
+                    coordinator.buildInitialView()
+                        .navigationDestination(for: Routes.self) { route in
+                            coordinator.buildDestination(for: route)
+                        }
+                }
+                .environmentObject(coordinator)
+            }
         }
     }
 }
