@@ -14,11 +14,19 @@ class AppCoordinator: ObservableObject {
     @Published var showSplashScreen = true
     
     let httpService: HTTPServicing
-    let service: Servicing
+    let service: PlanetServicing
     
     init() {
         self.httpService = HTTPService()
-        self.service = Service(httpService: httpService)
+        if CommandLine.arguments.contains("--uitesting") {
+            self.service = MockService()
+        } else {
+            self.service = PlanetService(httpService: httpService)
+        }
+    }
+    
+    func buildSplashScreen() -> some View {
+        return AnyView(SplashScreenView())
     }
     
     func buildInitialView() -> some View {
@@ -41,5 +49,11 @@ class AppCoordinator: ObservableObject {
     
     func reset() {
         path = NavigationPath()
+    }
+    
+    func hideSplashScreen() {
+        withAnimation(.easeOut(duration: 0.5)) {
+            showSplashScreen = false
+        }
     }
 }

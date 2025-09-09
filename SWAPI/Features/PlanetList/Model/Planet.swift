@@ -40,3 +40,30 @@ struct Planet: Codable, Hashable {
         case url
     }
 }
+
+extension Planet {
+    static let mockPlanet = Planet(
+        name: "Tatooine",
+        rotationPeriod: "23",
+        orbitalPeriod: "304",
+        diameter: "10465",
+        climate: "Arid",
+        gravity: "1 standard",
+        terrain: "Desert",
+        surfaceWater: "1",
+        population: "200000",
+        residents: [
+            "https://swapi.dev/api/people/1/",
+            "https://swapi.dev/api/people/2/",
+            "https://swapi.dev/api/people/4/" 
+        ],
+        films: [
+            "https://swapi.dev/api/films/1/",
+            "https://swapi.dev/api/films/3/"
+        ],
+        created: "2014-12-09T13:50:49.641000Z",
+        edited: "2014-12-20T20:58:18.411000Z",
+        url: "https://swapi.dev/api/planets/1/"
+    )
+}
+

@@ -32,7 +32,6 @@ struct SideMenu: View {
         .frame(maxHeight: .infinity)
         .background(Color(.systemGray6))
         .ignoresSafeArea(edges: .bottom)
-        .accessibilityIdentifier("SideMenu_Container")
     }
 }
 

@@ -6,6 +6,18 @@
   
 */
 
+/* Splash Screen */
+
+"splash.title" = "Star Wars Planets";
+"splash.subtitle" = "Explore the worlds of a galaxy far, far away";
+
+/* Network / Connectivity */
+
+"network.offline.title" = "You’re Offline";
+"network.offline.message" = "Check your internet connection and try again.";
+"network.banner.connected" = "Internet Connection Restored";
+"network.banner.disconnected" = "No Internet Connection";
+
 /* Planet List */
 
 "planetlist.title" = "SWAPI";
@@ -14,10 +26,28 @@
 "planetlist.error" = "Error";
 "planetlist.unknownError" = "Unknown error";
 
+/* Planet Detail */
+
+"planetdetail.overview" = "Overview";
+"planetdetail.physical" = "Physical Characteristics";
+"planetdetail.metadata" = "Metadata";
+
+"planetdetail.climate" = "Climate";
+"planetdetail.gravity" = "Gravity";
+"planetdetail.population" = "Population";
+
+"planetdetail.rotationPeriod" = "Rotation Period";
+"planetdetail.orbitalPeriod" = "Orbital Period";
+"planetdetail.diameter" = "Diameter";
+"planetdetail.surfaceWater" = "Surface Water";
+"planetdetail.terrain" = "Terrain";
+
+"planetdetail.created" = "Created";
+"planetdetail.edited" = "Edited";
+
 /* Side Menu */
 
 "menu.settings" = "Settings";
-"menu.debugLogs" = "Debug Logs";
 
 /* Settings View */
 

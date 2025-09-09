@@ -1,5 +1,5 @@
 //
-//  Service.swift
+//  PlanetService.swift
 //  SWAPI
 //
 //  Created by Nilusha Niwanthaka Wimalasena on 8/9/25.
@@ -7,9 +7,7 @@
 
 import Foundation
 
-import Foundation
-
-struct Service: Servicing {
+struct PlanetService: PlanetServicing {
     
     let httpService: HTTPServicing
     

@@ -18,13 +18,12 @@ class PlanetListViewModel: ObservableObject {
     @Published var isSearching: Bool = false
     
     static let planetCacheData = NSCache<NSString, NSArray>()
-    static let planetPageCache = NSCache<NSString, NSNumber>()
     
     private var cancellables = Set<AnyCancellable>()
     
-    let service: Servicing
+    let service: PlanetServicing
     
-    init(service: Servicing) {
+    init(service: PlanetServicing) {
         self.service = service
         searchPlanet()
     }
@@ -54,7 +53,7 @@ class PlanetListViewModel: ObservableObject {
             let planetData = try await service.fetchPlanetData()
             
             self.planets = planetData
-            self.filteredPlanets = planets
+            self.filteredPlanets = planetData
             
             Self.planetCacheData.setObject(planets as NSArray, forKey: CacheKey.allPlanetsCacheKey as NSString)
             
@@ -70,6 +69,7 @@ class PlanetListViewModel: ObservableObject {
     
     func searchPlanet() {
         $searchedText
+            .debounce(for: .milliseconds(250), scheduler: RunLoop.main)
             .sink { [weak self] text in
                 guard let self = self else { return }
                 if text.isEmpty {
@@ -85,6 +85,5 @@ class PlanetListViewModel: ObservableObject {
     
     func clearCache() {
         Self.planetCacheData.removeAllObjects()
-        Self.planetPageCache.removeAllObjects()
     }
 }

@@ -15,6 +15,7 @@ struct PlanetListView: View {
     @State private var showErrorAlert = false
     
     @EnvironmentObject private var coordinator: AppCoordinator
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     @Environment(\.dismiss) private var dismiss
 
     private let sideMenuWidth: CGFloat = 220
@@ -22,6 +23,7 @@ struct PlanetListView: View {
     init(viewModel: PlanetListViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
+    
     var body: some View {
         VStack(spacing: 10) {
             headerView
@@ -34,13 +36,17 @@ struct PlanetListView: View {
             .accessibilityIdentifier("PlanetList_SearchBar")
             
             contentView
-
         }
         .navigationDestination(for: Planet.self) { planet in
             PlanetDetailView(planet: planet)
         }
         .task {
             await viewModel.loadInitialData()
+        }
+        .onChange(of: networkMonitor.isConnected) { _, isConnected in
+            if isConnected {
+                Task { await viewModel.fetchPlanetData() }
+            }
         }
         .onChange(of: viewModel.errorMessage) { _, newValue in
             showErrorAlert = newValue != nil
@@ -66,12 +72,14 @@ struct PlanetListView: View {
                         .imageScale(.large)
                         .padding(.horizontal, 8)
                 }
+                .accessibilityIdentifier("PlanetList_MenuButton")
                 
                 Spacer()
             }
             
             Text(NSLocalizedString("planetlist.title", comment: "Planet List title"))
                 .font(.title2).bold()
+                .accessibilityIdentifier("PlanetList_Title")
         }
         .frame(height: 56)
         .padding(.horizontal)
@@ -85,6 +93,7 @@ struct PlanetListView: View {
                     .onTapGesture {
                         withAnimation(.easeInOut) { showMenu = false }
                     }
+                    .accessibilityIdentifier("PlanetList_Backdrop")
             }
             
             if showMenu {
@@ -93,10 +102,16 @@ struct PlanetListView: View {
                     .transition(.move(edge: .leading))
             }
             
-            planetList
-                .offset(x: showMenu ? sideMenuWidth : 0)
-                .disabled(showMenu)
-                .animation(.easeInOut, value: showMenu)
+            if !networkMonitor.isConnected && viewModel.planets.isEmpty {
+                NoNetworkView()
+                    .offset(x: showMenu ? sideMenuWidth : 0)
+                    .accessibilityIdentifier("PlanetList_NoNetworkView")
+            } else {
+                planetList
+                    .offset(x: showMenu ? sideMenuWidth : 0)
+                    .disabled(showMenu)
+                    .animation(.easeInOut, value: showMenu)
+            }
         }
     }
     
@@ -104,11 +119,23 @@ struct PlanetListView: View {
         List(viewModel.filteredPlanets, id: \.self) { planet in
             NavigationLink(value: planet) {
                 PlanetItemView(planet: planet)
+                    .accessibilityIdentifier("PlanetList_Row_\(planet.name)")
+            }
+            .onAppear {
+                if planet == viewModel.planets.last,
+                   !viewModel.isSearching,
+                   networkMonitor.isConnected {
+                    Task { await viewModel.fetchPlanetData() }
+                }
             }
         }
         .listStyle(.plain)
         .refreshable {
-            await viewModel.fetchPlanetData()
+            if networkMonitor.isConnected {
+                await viewModel.fetchPlanetData()
+            } else {
+                showNetworkAlert = true
+            }
         }
     }
 }
@@ -128,6 +155,12 @@ private extension View {
     }
 }
 
-//#Preview {
-//    PlanetListView()
-//}
+#Preview {
+    let viewModel = PlanetListViewModel(service: MockService())
+    let networkMonitor = NetworkMonitor()
+    let coordinator = AppCoordinator()
+    
+    PlanetListView(viewModel: viewModel)
+        .environmentObject(networkMonitor)
+        .environmentObject(coordinator)
+}

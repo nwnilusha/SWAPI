@@ -1,0 +1,63 @@
+/* 
+  Localizable.strings
+  SWAPI
+
+  Created by Nilusha Niwanthaka Wimalasena on 8/9/25.
+  
+*/
+
+/* Splash Screen */
+
+"splash.title" = "Planètes de Star Wars";
+"splash.subtitle" = "Explorez les mondes d’une galaxie lointaine, très lointaine";
+
+/* Network / Connectivity */
+
+"network.offline.title" = "Vous êtes hors ligne";
+"network.offline.message" = "Vérifiez votre connexion internet et réessayez.";
+"network.banner.connected" = "Connexion internet rétablie";
+"network.banner.disconnected" = "Pas de connexion internet";
+
+/* Planet List */
+
+"planetlist.title" = "SWAPI";
+"planetlist.search.placeholder" = "Rechercher par nom de planète";
+"planetlist.ok" = "OK";
+"planetlist.error" = "Erreur";
+"planetlist.unknownError" = "Erreur inconnue";
+
+/* Planet Detail */
+
+"planetdetail.overview" = "Aperçu";
+"planetdetail.physical" = "Caractéristiques physiques";
+"planetdetail.metadata" = "Métadonnées";
+
+"planetdetail.climate" = "Climat";
+"planetdetail.gravity" = "Gravité";
+"planetdetail.population" = "Population";
+
+"planetdetail.rotationPeriod" = "Période de rotation";
+"planetdetail.orbitalPeriod" = "Période orbitale";
+"planetdetail.diameter" = "Diamètre";
+"planetdetail.surfaceWater" = "Eau de surface";
+"planetdetail.terrain" = "Relief";
+
+"planetdetail.created" = "Créé";
+"planetdetail.edited" = "Modifié";
+
+/* Side Menu */
+
+"menu.settings" = "Paramètres";
+
+/* Settings View */
+
+"settings.title" = "Paramètres";
+"settings.section.appearance" = "Apparence";
+"settings.theme" = "Thème de l’application";
+"settings.theme.system" = "Système";
+"settings.theme.light" = "Clair";
+"settings.theme.dark" = "Sombre";
+
+"settings.section.about" = "À propos";
+"settings.appVersion" = "Version de l’application";
+"settings.buildNumber" = "Numéro de build";

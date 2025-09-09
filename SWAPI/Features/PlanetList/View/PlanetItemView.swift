@@ -19,6 +19,7 @@ struct PlanetItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Name: \(planet.name)")
                     .font(.headline)
+                    .accessibilityIdentifier("PlanetRow_Name_\(planet.name)")
                 Text("Climate: \(planet.climate)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
@@ -58,6 +59,6 @@ struct RemoteImageView: View {
     }
 }
 
-//#Preview {
-//    PlanetItemView()
-//}
+#Preview {
+    PlanetItemView(planet: Planet.mockPlanet)
+}
