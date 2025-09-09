@@ -29,19 +29,7 @@ class PlanetListViewModel: ObservableObject {
     }
     
     @MainActor
-    func loadInitialData() async {
-        if !self.planets.isEmpty {
-            return
-        } else if let cachePlanets = Self.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString) as? [Planet] {
-            self.planets = cachePlanets
-            self.filteredPlanets = cachePlanets
-        } else {
-            await fetchPlanetData()
-        }
-    }
-    
-    @MainActor
-    func fetchPlanetData() async {
+    func fetchPlanetData(forceRefresh: Bool = false) async {
         guard !isLoading else { return }
         isLoading = true
         
@@ -49,20 +37,26 @@ class PlanetListViewModel: ObservableObject {
             isLoading = false
         }
         
-        do {
-            let planetData = try await service.fetchPlanetData()
-            
-            self.planets = planetData
-            self.filteredPlanets = planetData
-            
-            Self.planetCacheData.setObject(planets as NSArray, forKey: CacheKey.allPlanetsCacheKey as NSString)
-            
-        } catch {
-            if let apiError = error as? RequestError {
-                errorMessage = apiError.errorDiscription
-                print("Fetch data failed: \(apiError.errorDiscription)")
-            } else {
-                errorMessage = "Unknown error occurred"
+        if !forceRefresh,
+           let cached = Self.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString) as? [Planet] {
+            self.planets = cached
+            self.filteredPlanets = cached
+        } else {
+            do {
+                let planetData = try await service.fetchPlanetData()
+                
+                self.planets = planetData
+                self.filteredPlanets = planetData
+                
+                Self.planetCacheData.setObject(planets as NSArray, forKey: CacheKey.allPlanetsCacheKey as NSString)
+                
+            } catch {
+                if let apiError = error as? RequestError {
+                    errorMessage = apiError.errorDiscription
+                    print("Fetch data failed: \(apiError.errorDiscription)")
+                } else {
+                    errorMessage = "Unknown error occurred"
+                }
             }
         }
     }

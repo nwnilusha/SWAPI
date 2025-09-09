@@ -41,7 +41,7 @@ struct PlanetListView: View {
             PlanetDetailView(planet: planet)
         }
         .task {
-            await viewModel.loadInitialData()
+            await viewModel.fetchPlanetData()
         }
         .onChange(of: networkMonitor.isConnected) { _, isConnected in
             if isConnected {
@@ -121,18 +121,11 @@ struct PlanetListView: View {
                 PlanetItemView(planet: planet)
                     .accessibilityIdentifier("PlanetList_Row_\(planet.name)")
             }
-            .onAppear {
-                if planet == viewModel.planets.last,
-                   !viewModel.isSearching,
-                   networkMonitor.isConnected {
-                    Task { await viewModel.fetchPlanetData() }
-                }
-            }
         }
         .listStyle(.plain)
         .refreshable {
             if networkMonitor.isConnected {
-                await viewModel.fetchPlanetData()
+                await viewModel.fetchPlanetData(forceRefresh: true)
             } else {
                 showNetworkAlert = true
             }

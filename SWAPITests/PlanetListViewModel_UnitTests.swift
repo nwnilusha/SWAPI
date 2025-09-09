@@ -84,8 +84,7 @@ final class PlanetListViewModelTests: XCTestCase {
 
         XCTAssertTrue(vm.planets.isEmpty)
     }
-    
-    // MARK: - Searching
+
     func testSearchPlanetEmptyText() async {
         let vm = PlanetListViewModel(service: MockService())
         await vm.fetchPlanetData()
