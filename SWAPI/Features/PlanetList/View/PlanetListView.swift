@@ -149,7 +149,7 @@ private extension View {
 }
 
 #Preview {
-    let viewModel = PlanetListViewModel(service: MockService(), cache: PlanetMemoryCache())
+    let viewModel = PlanetListViewModel(service: MockService(), cache: MockCache())
     let networkMonitor = NetworkMonitor()
     let coordinator = AppCoordinator()
     
