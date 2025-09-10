@@ -16,32 +16,20 @@ class PlanetListViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isSearching: Bool = false
-    
-    static let planetCacheData = NSCache<NSString, NSArray>()
-    
+
     private var cancellables = Set<AnyCancellable>()
     
     let service: PlanetServicing
+    let cache: PlanetCaching
     
-    init(service: PlanetServicing) {
+    init(service: PlanetServicing, cache: PlanetCaching) {
         self.service = service
+        self.cache = cache
         searchPlanet()
     }
     
     @MainActor
-    func loadInitialData() async {
-        if !self.planets.isEmpty {
-            return
-        } else if let cachePlanets = Self.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString) as? [Planet] {
-            self.planets = cachePlanets
-            self.filteredPlanets = cachePlanets
-        } else {
-            await fetchPlanetData()
-        }
-    }
-    
-    @MainActor
-    func fetchPlanetData() async {
+    func fetchPlanetData(forceRefresh: Bool = false) async {
         guard !isLoading else { return }
         isLoading = true
         
@@ -49,20 +37,24 @@ class PlanetListViewModel: ObservableObject {
             isLoading = false
         }
         
-        do {
-            let planetData = try await service.fetchPlanetData()
-            
-            self.planets = planetData
-            self.filteredPlanets = planetData
-            
-            Self.planetCacheData.setObject(planets as NSArray, forKey: CacheKey.allPlanetsCacheKey as NSString)
-            
-        } catch {
-            if let apiError = error as? RequestError {
-                errorMessage = apiError.errorDiscription
-                print("Fetch data failed: \(apiError.errorDiscription)")
-            } else {
-                errorMessage = "Unknown error occurred"
+        if !forceRefresh,let cached = cache.load() {
+            self.planets = cached
+            self.filteredPlanets = cached
+        } else {
+            do {
+                let planetData = try await service.fetchPlanetData()
+                
+                self.planets = planetData
+                self.filteredPlanets = planetData
+                
+                cache.save(planets: planets)
+            } catch {
+                if let apiError = error as? RequestError {
+                    errorMessage = apiError.errorDiscription
+                    print("Fetch data failed: \(apiError.errorDiscription)")
+                } else {
+                    errorMessage = "Unknown error occurred"
+                }
             }
         }
     }
@@ -84,6 +76,6 @@ class PlanetListViewModel: ObservableObject {
     }
     
     func clearCache() {
-        Self.planetCacheData.removeAllObjects()
+        cache.clear()
     }
 }

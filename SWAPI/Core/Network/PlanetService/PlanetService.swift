@@ -9,7 +9,7 @@ import Foundation
 
 struct PlanetService: PlanetServicing {
     
-    let httpService: HTTPServicing
+    let httpService: APIClientProtocol
     
     func fetchPlanetData() async throws -> [Planet] {
         do {

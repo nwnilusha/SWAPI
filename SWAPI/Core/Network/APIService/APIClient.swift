@@ -1,5 +1,5 @@
 //
-//  HTTPService.swift
+//  APIClient.swift
 //  SWAPI
 //
 //  Created by Nilusha Niwanthaka Wimalasena on 8/9/25.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-class HTTPService: HTTPServicing {
+class APIClient: APIClientProtocol {
     
-    func sendRequest<T>(session: URLSession, endpoint: any Endpoint, responseModel: T.Type) async throws -> T where T : Decodable {
+    func sendRequest<T: Decodable>(session: URLSession, endpoint: any Endpoint, responseModel: T.Type) async throws -> T {
         var urlComponent = URLComponents()
         urlComponent.scheme = endpoint.scheme
         urlComponent.host = endpoint.host
