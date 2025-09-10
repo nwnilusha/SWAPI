@@ -17,10 +17,10 @@ struct PlanetItemView: View {
                 .cornerRadius(8)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Name: \(planet.name)")
+                Text("\(NSLocalizedString("planetlist.item.name", comment: "Planet item name")): \(planet.name)")
                     .font(.headline)
                     .accessibilityIdentifier("PlanetRow_Name_\(planet.name)")
-                Text("Climate: \(planet.climate)")
+                Text("\(NSLocalizedString("planetlist.item.climate", comment: "Planet item climate")): \(planet.climate)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }

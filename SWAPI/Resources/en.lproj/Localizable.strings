@@ -25,6 +25,8 @@
 "planetlist.ok" = "OK";
 "planetlist.error" = "Error";
 "planetlist.unknownError" = "Unknown error";
+"planetlist.item.name" = "Name";
+"planetlist.item.climate" = "Climate";
 
 /* Planet Detail */
 
