@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MockHTTPService: HTTPServicing {
+final class MockHTTPService: APIClientProtocol {
     var result: Result<[Planet], Error>?
     
     func sendRequest<T>(
