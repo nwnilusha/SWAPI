@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct PlanetDetailView: View {
     let planet: Planet
     
