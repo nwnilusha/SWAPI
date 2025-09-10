@@ -11,13 +11,23 @@ import Combine
 
 final class PlanetListViewModelTests: XCTestCase {
     
+    private var cache: MockCache!
+    private var service: MockService!
+    
+    override func setUp() {
+        super.setUp()
+        cache = MockCache()
+        service = MockService()
+    }
+    
     override func tearDown() {
-        PlanetListViewModel.planetCacheData.removeAllObjects()
+        cache = nil
+        service = nil
         super.tearDown()
     }
 
     func testInitialState() {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         XCTAssertTrue(vm.planets.isEmpty)
         XCTAssertTrue(vm.filteredPlanets.isEmpty)
         XCTAssertEqual(vm.searchedText, "")
@@ -26,27 +36,26 @@ final class PlanetListViewModelTests: XCTestCase {
         XCTAssertFalse(vm.isSearching)
     }
 
-    func testLoadInitialDataFromCache() async {
-        let cached = Planet.mockPlanets
-        PlanetListViewModel.planetCacheData.setObject(cached as NSArray,
-                                                      forKey: CacheKey.allPlanetsCacheKey as NSString)
+    func testLoadFromCache() async {
+        cache.savedPlanets = Planet.mockPlanets
         
-        let vm = PlanetListViewModel(service: MockEmptyData())
-        await vm.loadInitialData()
+        let vm = PlanetListViewModel(service: service, cache: cache)
+        await vm.fetchPlanetData()
         
         XCTAssertEqual(vm.planets.count, 10)
         XCTAssertEqual(vm.filteredPlanets.first?.name, "Mirial")
     }
     
-    func testLoadInitialDataLoaded() async {
-        let vm = PlanetListViewModel(service: MockService())
-        XCTAssertNotEqual(vm.planets.count, 10)
-        await vm.loadInitialData()
+    func testLoadFromServiceWhenCacheEmpty() async {
+        let vm = PlanetListViewModel(service: service, cache: cache)
+        await vm.fetchPlanetData()
+        
         XCTAssertEqual(vm.planets.count, 10)
+        XCTAssertEqual(cache.savedPlanets?.count, 10)
     }
 
     func testSuccessfulFetch() async {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
         XCTAssertFalse(vm.planets.isEmpty)
@@ -55,7 +64,7 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchEmptyData() async {
-        let vm = PlanetListViewModel(service: MockEmptyData())
+        let vm = PlanetListViewModel(service: MockEmptyData(), cache: cache)
         await vm.fetchPlanetData()
         
         XCTAssertTrue(vm.planets.isEmpty)
@@ -64,21 +73,21 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchFailureRequestError() async {
-        let vm = PlanetListViewModel(service: MockServiceError())
+        let vm = PlanetListViewModel(service: MockServiceError(), cache: cache)
         await vm.fetchPlanetData()
         
         XCTAssertEqual(vm.errorMessage, RequestError.invalidURL.errorDiscription)
     }
     
     func testFetchFailureUnknownError() async {
-        let vm = PlanetListViewModel(service: MockServiceThrowsUnknown())
+        let vm = PlanetListViewModel(service: MockServiceThrowsUnknown(), cache: cache)
         await vm.fetchPlanetData()
         
         XCTAssertEqual(vm.errorMessage, "Unknown error occurred")
     }
     
     func testFetchSkipsIfAlreadyLoading() async {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         vm.isLoading = true
         await vm.fetchPlanetData()
 
@@ -86,7 +95,7 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testSearchPlanetEmptyText() async {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
         vm.searchedText = ""
@@ -95,36 +104,37 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testSearchPlanetWithMatch() async {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
         vm.searchedText = "Kalee"
         try? await Task.sleep(nanoseconds: 300_000_000)
+        
         XCTAssertEqual(vm.filteredPlanets.first?.name, "Kalee")
         XCTAssertEqual(vm.filteredPlanets.count, 1)
         XCTAssertTrue(vm.isSearching)
     }
     
     func testSearchPlanetNoMatch() async {
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
         vm.searchedText = "Earth"
         try? await Task.sleep(nanoseconds: 300_000_000)
+        
         XCTAssertEqual(vm.filteredPlanets.count, 0)
         XCTAssertTrue(vm.isSearching)
     }
 
     func testClearCache() {
-        PlanetListViewModel.planetCacheData.setObject(Planet.mockPlanets as NSArray,
-                                                      forKey: CacheKey.allPlanetsCacheKey as NSString)
+        cache.savedPlanets = Planet.mockPlanets
+        XCTAssertNotNil(cache.savedPlanets)
         
-        XCTAssertNotNil(PlanetListViewModel.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString))
-        
-        let vm = PlanetListViewModel(service: MockService())
+        let vm = PlanetListViewModel(service: service, cache: cache)
         vm.clearCache()
         
-        XCTAssertNil(PlanetListViewModel.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString))
+        XCTAssertNil(cache.savedPlanets)
+        XCTAssertTrue(cache.cleared)
     }
 }
 

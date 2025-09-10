@@ -30,7 +30,8 @@ class AppCoordinator: ObservableObject {
     }
     
     func buildInitialView() -> some View {
-        let vm = PlanetListViewModel(service: self.service)
+        let cache = PlanetMemoryCache()
+        let vm = PlanetListViewModel(service: self.service, cache: cache)
         return AnyView(PlanetListView(viewModel: vm))
     }
     

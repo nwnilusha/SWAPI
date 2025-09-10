@@ -16,15 +16,15 @@ class PlanetListViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isSearching: Bool = false
-    
-    static let planetCacheData = NSCache<NSString, NSArray>()
-    
+
     private var cancellables = Set<AnyCancellable>()
     
     let service: PlanetServicing
+    let cache: PlanetCaching
     
-    init(service: PlanetServicing) {
+    init(service: PlanetServicing, cache: PlanetCaching) {
         self.service = service
+        self.cache = cache
         searchPlanet()
     }
     
@@ -37,8 +37,7 @@ class PlanetListViewModel: ObservableObject {
             isLoading = false
         }
         
-        if !forceRefresh,
-           let cached = Self.planetCacheData.object(forKey: CacheKey.allPlanetsCacheKey as NSString) as? [Planet] {
+        if !forceRefresh,let cached = cache.load() {
             self.planets = cached
             self.filteredPlanets = cached
         } else {
@@ -48,8 +47,7 @@ class PlanetListViewModel: ObservableObject {
                 self.planets = planetData
                 self.filteredPlanets = planetData
                 
-                Self.planetCacheData.setObject(planets as NSArray, forKey: CacheKey.allPlanetsCacheKey as NSString)
-                
+                cache.save(planets: planets)
             } catch {
                 if let apiError = error as? RequestError {
                     errorMessage = apiError.errorDiscription
@@ -78,6 +76,6 @@ class PlanetListViewModel: ObservableObject {
     }
     
     func clearCache() {
-        Self.planetCacheData.removeAllObjects()
+        cache.clear()
     }
 }
