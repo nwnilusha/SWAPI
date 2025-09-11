@@ -69,6 +69,7 @@ git clone https://github.com/nwnilusha/SWAPI.git
 
 ## Possible Improvements
 - Offline capability with SwiftData/CoreData
+- Image caching.
 
 ## License
 This project is for interview/demo purposes only and uses the free SWAPI public API.
