@@ -13,11 +13,13 @@ class AppCoordinator: ObservableObject {
     @Published var path = NavigationPath()
     @Published var showSplashScreen = true
     
-    let httpService: APIClientProtocol
-    let service: PlanetServicing
+    private let httpService: APIClientProtocol
+    private let service: PlanetServicing
+    private let cache: PlanetCaching
     
     init() {
         self.httpService = APIClient()
+        self.cache = PlanetMemoryCache()
         if CommandLine.arguments.contains("--uitesting") {
             self.service = MockService()
         } else {
@@ -30,7 +32,6 @@ class AppCoordinator: ObservableObject {
     }
     
     func buildInitialView() -> some View {
-        let cache = PlanetMemoryCache()
         let vm = PlanetListViewModel(service: self.service, cache: cache)
         return AnyView(PlanetListView(viewModel: vm))
     }
