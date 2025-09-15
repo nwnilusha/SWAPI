@@ -11,7 +11,6 @@ struct SplashScreenView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @State private var scale = 0.8
     @State private var opacity = 0.0
-    @State private var rotation = 0.0
     
     var body: some View {
         ZStack {
@@ -27,12 +26,11 @@ struct SplashScreenView: View {
                     .font(.system(size: 80))
                     .foregroundColor(.white)
                     .scaleEffect(scale)
-                    .rotationEffect(.degrees(rotation))
 
                 Text(NSLocalizedString("splash.title", comment: "Splash Screen App Title"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.white.opacity(0.8))
                     .opacity(opacity)
 
                 Text(NSLocalizedString("splash.subtitle", comment: "Splash Screen Subtitle"))
