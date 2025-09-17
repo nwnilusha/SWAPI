@@ -58,7 +58,10 @@ class APIClient: APIClientProtocol {
             } catch {
                 throw RequestError.decodingError(error.localizedDescription)
             }
-        } catch {
+        } catch let error as RequestError {
+            throw error
+        }
+        catch {
             throw RequestError.dataTaskError(error.localizedDescription)
         }
     }

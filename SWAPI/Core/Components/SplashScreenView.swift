@@ -53,5 +53,8 @@ struct SplashScreenView: View {
 }
 
 #Preview {
+    let coordinator = AppCoordinator()
+    
     SplashScreenView()
+        .environmentObject(coordinator)
 }

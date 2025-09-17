@@ -28,12 +28,12 @@ class AppCoordinator: ObservableObject {
     }
     
     func buildSplashScreen() -> some View {
-        return AnyView(SplashScreenView())
+        return SplashScreenView()
     }
     
     func buildInitialView() -> some View {
         let vm = PlanetListViewModel(service: self.service, cache: cache)
-        return AnyView(PlanetListView(viewModel: vm))
+        return PlanetListView(viewModel: vm)
     }
     
     func buildDestination(for route: Routes) -> some View {
