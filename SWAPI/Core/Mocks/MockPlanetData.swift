@@ -11,4 +11,8 @@ extension Planet {
     static var mockPlanets: [Planet] {
         Bundle.main.decode([Planet].self, from: "mock_planets.json")
     }
+    
+    static var mockCachePlanets: [Planet] {
+        Bundle.main.decode([Planet].self, from: "mock_cache_planets.json")
+    }
 }

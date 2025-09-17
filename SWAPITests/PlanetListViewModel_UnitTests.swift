@@ -11,8 +11,8 @@ import Combine
 
 final class PlanetListViewModelTests: XCTestCase {
     
-    private var cache: MockCache!
-    private var service: MockService!
+    private var cache: MockCache?
+    private var service: MockService?
     
     override func setUp() {
         super.setUp()
@@ -27,6 +27,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testInitialState() {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         XCTAssertTrue(vm.planets.isEmpty)
         XCTAssertTrue(vm.filteredPlanets.isEmpty)
@@ -37,16 +41,24 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testLoadFromCache() async {
-        cache.savedPlanets = Planet.mockPlanets
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
+        cache.savedPlanets = Planet.mockCachePlanets
         
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
-        XCTAssertEqual(vm.planets.count, 10)
-        XCTAssertEqual(vm.filteredPlanets.first?.name, "Mirial")
+        XCTAssertEqual(vm.planets.count, 15)
+        XCTAssertEqual(vm.filteredPlanets.first?.name, "Hoth")
     }
     
     func testLoadFromServiceWhenCacheEmpty() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
@@ -55,6 +67,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testSuccessfulFetch() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
@@ -64,6 +80,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchEmptyData() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: MockEmptyData(), cache: cache)
         await vm.fetchPlanetData()
         
@@ -73,6 +93,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchFailureRequestError() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: MockServiceError(), cache: cache)
         await vm.fetchPlanetData()
         
@@ -80,6 +104,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchFailureUnknownError() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: MockServiceThrowsUnknown(), cache: cache)
         await vm.fetchPlanetData()
         
@@ -87,6 +115,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchSkipsIfAlreadyLoading() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         vm.isLoading = true
         await vm.fetchPlanetData()
@@ -95,6 +127,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testSearchPlanetEmptyText() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
@@ -104,6 +140,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testSearchPlanetWithMatch() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
@@ -116,6 +156,10 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testSearchPlanetNoMatch() async {
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
         let vm = PlanetListViewModel(service: service, cache: cache)
         await vm.fetchPlanetData()
         
@@ -127,7 +171,11 @@ final class PlanetListViewModelTests: XCTestCase {
     }
 
     func testClearCache() {
-        cache.savedPlanets = Planet.mockPlanets
+        guard let cache = cache, let service = service else {
+            XCTFail("Cache/Service not initialized")
+            return
+        }
+        cache.savedPlanets = Planet.mockCachePlanets
         XCTAssertNotNil(cache.savedPlanets)
         
         let vm = PlanetListViewModel(service: service, cache: cache)
