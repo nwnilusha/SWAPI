@@ -13,6 +13,7 @@ struct PlanetListView: View {
     @State private var showMenu = false
     @State private var showNetworkAlert = false
     @State private var showErrorAlert = false
+    @State private var fetchTask:Task<Void, Never>?
     
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var networkMonitor: NetworkMonitor
@@ -45,7 +46,10 @@ struct PlanetListView: View {
         }
         .onChange(of: networkMonitor.isConnected) { _, isConnected in
             if isConnected {
-                Task { await viewModel.fetchPlanetData() }
+                startFetchingData()
+            } else {
+                fetchTask?.cancel()
+                fetchTask = nil
             }
         }
         .onChange(of: viewModel.errorMessage) { _, newValue in
@@ -129,6 +133,13 @@ struct PlanetListView: View {
             } else {
                 showNetworkAlert = true
             }
+        }
+    }
+    
+    private func startFetchingData(force: Bool = false) {
+        fetchTask?.cancel()
+        fetchTask = Task {
+            await viewModel.fetchPlanetData(forceRefresh: force)
         }
     }
 }

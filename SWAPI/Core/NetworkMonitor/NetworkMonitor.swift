@@ -52,4 +52,9 @@ final class NetworkMonitor: ObservableObject {
         }
         monitor.start(queue: queue)
     }
+    
+    deinit {
+        monitor.cancel()
+        hideTask?.cancel()
+    }
 }

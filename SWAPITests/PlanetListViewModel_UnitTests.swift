@@ -80,7 +80,7 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchEmptyData() async {
-        guard let cache = cache, let service = service else {
+        guard let cache = cache else {
             XCTFail("Cache/Service not initialized")
             return
         }
@@ -93,7 +93,7 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchFailureRequestError() async {
-        guard let cache = cache, let service = service else {
+        guard let cache = cache else {
             XCTFail("Cache/Service not initialized")
             return
         }
@@ -104,7 +104,7 @@ final class PlanetListViewModelTests: XCTestCase {
     }
     
     func testFetchFailureUnknownError() async {
-        guard let cache = cache, let service = service else {
+        guard let cache = cache else {
             XCTFail("Cache/Service not initialized")
             return
         }
